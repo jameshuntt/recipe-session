@@ -1,0 +1,41 @@
+[package]
+name = "recipe-session"
+readme = "README.md"
+version = "0.1.0"
+edition = "2024"
+
+license = "MIT OR Apache-2.0"
+description = "Generic recipe-backed ingress/egress session contract primitives."
+
+authors = ["James Hunt <jameshuntdevelopment@gmail.com>"]
+repository = "https://github.com/jameshuntt/recipe-session"
+
+[lib]
+name = "recipe_session"
+path = "src/lib.rs"
+
+[dependencies]
+sha2 = "0.10"
+
+[dev-dependencies]
+recipe_writer = { path = "../recipe_writer" }
+recipes = { path = "../recipes" }
+
+
+# [package]
+# name = "recipe-session"
+# version = "0.1.0"
+# edition = "2024"
+
+# license = "MIT OR Apache-2.0"
+# description = "Generic recipe-backed ingress/egress session contract primitives."
+
+# authors = ["James Hunt <jameshuntdevelopment@gmail.com>"]
+# repository = "https://github.com/jameshuntt/recipe-session"
+
+# [lib]
+# name = "recipe_session"
+# path = "src/lib.rs"
+
+# [dependencies]
+# sha2 = "0.10"
