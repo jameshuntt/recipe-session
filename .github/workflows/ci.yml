@@ -15,10 +15,9 @@ env:
   CARGO_TERM_COLOR: always
   # the crates this repo publishes, in the order they depend on each other
   CRATES: recipe-session
-  # crates this one depends on by path; CI clones them next to it
-  SIBLINGS: recipe recipe_writer
-  # path dependencies whose repos are private; CI unpacks their crates.io release next to it
-  PUBLISHED_SIBLINGS: recipes
+  # path dev-dependencies CI unpacks from their crates.io release next to it: recipes' repo is private,
+  # and recipe_writer comes the same way so that both build on the one recipe crate from crates.io
+  PUBLISHED_SIBLINGS: recipe_writer recipes
 
 jobs:
   test:
@@ -30,16 +29,7 @@ jobs:
         rust: [stable, "1.85"]
     steps:
       - uses: actions/checkout@v6
-      - name: Clone the sibling crates this one builds against (../<name>)
-        # the same branch when a sibling has one, so a change across crates is tested together
-        run: |
-          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          for s in $SIBLINGS; do
-            git clone --depth 1 --branch "$branch" "https://github.com/jameshuntt/$s.git" "../$s" 2>/dev/null \
-              || git clone --depth 1 "https://github.com/jameshuntt/$s.git" "../$s"
-            echo "$s: $(git -C "../$s" rev-parse --abbrev-ref HEAD) $(git -C "../$s" rev-parse --short HEAD)"
-          done
-      - name: The sibling crates whose repos are private, as published on crates.io (../<name>)
+      - name: The sibling crates CI takes as published on crates.io (../<name>)
         run: |
           for s in $PUBLISHED_SIBLINGS; do
             v=$(curl -sf -A "github.com/${GITHUB_REPOSITORY} CI" "https://crates.io/api/v1/crates/$s" | jq -r .crate.max_version)
@@ -62,16 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Clone the sibling crates this one builds against (../<name>)
-        # the same branch when a sibling has one, so a change across crates is tested together
-        run: |
-          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          for s in $SIBLINGS; do
-            git clone --depth 1 --branch "$branch" "https://github.com/jameshuntt/$s.git" "../$s" 2>/dev/null \
-              || git clone --depth 1 "https://github.com/jameshuntt/$s.git" "../$s"
-            echo "$s: $(git -C "../$s" rev-parse --abbrev-ref HEAD) $(git -C "../$s" rev-parse --short HEAD)"
-          done
-      - name: The sibling crates whose repos are private, as published on crates.io (../<name>)
+      - name: The sibling crates CI takes as published on crates.io (../<name>)
         run: |
           for s in $PUBLISHED_SIBLINGS; do
             v=$(curl -sf -A "github.com/${GITHUB_REPOSITORY} CI" "https://crates.io/api/v1/crates/$s" | jq -r .crate.max_version)
@@ -95,16 +76,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
-      - name: Clone the sibling crates this one builds against (../<name>)
-        # the same branch when a sibling has one, so a change across crates is tested together
-        run: |
-          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          for s in $SIBLINGS; do
-            git clone --depth 1 --branch "$branch" "https://github.com/jameshuntt/$s.git" "../$s" 2>/dev/null \
-              || git clone --depth 1 "https://github.com/jameshuntt/$s.git" "../$s"
-            echo "$s: $(git -C "../$s" rev-parse --abbrev-ref HEAD) $(git -C "../$s" rev-parse --short HEAD)"
-          done
-      - name: The sibling crates whose repos are private, as published on crates.io (../<name>)
+      - name: The sibling crates CI takes as published on crates.io (../<name>)
         run: |
           for s in $PUBLISHED_SIBLINGS; do
             v=$(curl -sf -A "github.com/${GITHUB_REPOSITORY} CI" "https://crates.io/api/v1/crates/$s" | jq -r .crate.max_version)
